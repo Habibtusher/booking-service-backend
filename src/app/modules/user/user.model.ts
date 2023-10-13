@@ -38,7 +38,8 @@ const UserSchema = new Schema<IUser, UserModel>(
     password: {
         type: String,
         required:true,
-        select: 0
+
+      
     },
     presentAddress: {
       type: String,
@@ -72,5 +73,18 @@ UserSchema.pre('save', async function (next) {
 
   next();
 });
-
+UserSchema.statics.isUserExist = async function (
+  email: string
+): Promise<IUser | null> {
+  return await User.findOne(
+    { email },
+    {  password: 1, role: 1, email:1 }
+  );
+};
+UserSchema.statics.isPasswordMatched = async function (
+  givenPassword: string,
+  savedPassword: string
+): Promise<boolean> {
+  return await bcrypt.compare(givenPassword, savedPassword);
+};
 export const User = model<IUser, UserModel>('User', UserSchema);

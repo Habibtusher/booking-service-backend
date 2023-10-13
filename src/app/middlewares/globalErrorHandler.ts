@@ -1,50 +1,66 @@
-import { ErrorRequestHandler } from 'express';
-import { IGenericErrorMeaagae } from '../../interface/error';
+/* eslint-disable no-console */
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-unused-expressions */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { ErrorRequestHandler, NextFunction, Request, Response } from 'express';
 import config from '../../config';
-import ApiError from '../../error/ApiError';
-import { handleCastError } from '../../error/handleCastError';
-import handleZodError from '../../interface/handleZodError';
-import handleValidationError from '../../error/handleValidationError';
-import { ZodError } from 'zod';
 
-const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
+
+import { ZodError } from 'zod';
+import handleValidationError from '../../error/handleValidationError';
+import handleZodError from '../../interface/handleZodError';
+import { handleCastError } from '../../error/handleCastError';
+import ApiError from '../../error/ApiError';
+import { IGenericErrorMeaagae } from '../../interface/error';
+
+
+const globalErrorHandler: ErrorRequestHandler = (
+  error,
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  config.env === 'development'
+    ? console.log(`🐱‍🏍 globalErrorHandler ~~`, { error })
+    : console.log(`🐱‍🏍 globalErrorHandler ~~`, error);
+
   let statusCode = 500;
-  let message = 'Internal Server Error';
+  let message = 'Something went wrong !';
   let errorMessages: IGenericErrorMeaagae[] = [];
 
-  if (err?.name === 'ValidatorError') {
-    const simplefiedError = handleValidationError(err);
-    statusCode = simplefiedError.statusCode;
-    message = simplefiedError.message;
-    errorMessages = simplefiedError.errorMessages;
-  } else if (err instanceof ZodError) {
-    const simplefiedError = handleZodError(err);
-    statusCode = simplefiedError.statusCode;
-    message = simplefiedError.message;
-    errorMessages = simplefiedError.errorMessages;
-  } else if (err?.name === 'CastError') {
-    const simplefiedError = handleCastError(err);
-    statusCode = simplefiedError.statusCode;
-    message = simplefiedError.message;
-    errorMessages = simplefiedError.errorMessages;
-  } else if (err instanceof ApiError) {
-    statusCode = err?.statusCode;
-    message = err?.message;
-    errorMessages = err?.message
+  if (error?.name === 'ValidationError') {
+    const simplifiedError = handleValidationError(error);
+    statusCode = simplifiedError.statusCode;
+    message = simplifiedError.message;
+    errorMessages = simplifiedError.errorMessages;
+  } else if (error instanceof ZodError) {
+    const simplifiedError = handleZodError(error);
+    statusCode = simplifiedError.statusCode;
+    message = simplifiedError.message;
+    errorMessages = simplifiedError.errorMessages;
+  } else if (error?.name === 'CastError') {
+    const simplifiedError = handleCastError(error);
+    statusCode = simplifiedError.statusCode;
+    message = simplifiedError.message;
+    errorMessages = simplifiedError.errorMessages;
+  } else if (error instanceof ApiError) {
+    statusCode = error?.statusCode;
+    message = error.message;
+    errorMessages = error?.message
       ? [
           {
             path: '',
-            message: err?.message,
+            message: error?.message,
           },
         ]
       : [];
-  } else if (err instanceof Error) {
-    message = err?.message;
-    errorMessages = err?.message
+  } else if (error instanceof Error) {
+    message = error?.message;
+    errorMessages = error?.message
       ? [
           {
             path: '',
-            message: err?.message,
+            message: error?.message,
           },
         ]
       : [];
@@ -54,7 +70,8 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
     success: false,
     message,
     errorMessages,
-    stack: config.env !== 'production' ? err?.stack : undefined,
+    stack: config.env !== 'production' ? error?.stack : undefined,
   });
 };
+
 export default globalErrorHandler;
