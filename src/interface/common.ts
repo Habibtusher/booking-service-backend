@@ -13,3 +13,7 @@ export type IGenericResponse<T> = {
   };
   data: T;
 };
+export type IReviewFilters = {
+  searchTerm?: string;
+  name?: string;
+};
