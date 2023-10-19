@@ -24,7 +24,7 @@ const getAllFromDB = catchasync(async (req: Request, res: Response) => {
   sendResponse<IService[]>(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Students fetched successfully !',
+    message: 'Service fetched successfully !',
     meta: result.meta,
     data: result.data,
   });
