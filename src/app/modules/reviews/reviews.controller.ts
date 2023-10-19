@@ -1,29 +1,28 @@
 import { Request, Response } from 'express';
 import catchasync from '../../../shared/catchAsync';
-import { ServiceService } from './service.service';
+import { ReviewService } from './reviews.service';
 import sendResponse from '../../../shared/sendResponse';
 import httpStatus from 'http-status';
 
 const insertIntoDB = catchasync(async (req: Request, res: Response) => {
-  const result = await ServiceService.insertIntoDB(req.body);
+  const result = await ReviewService.insertIntoDB(req.body);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Success created',
+    message: 'Review added successully',
     data: result,
   });
 });
 const getAllFromDB = catchasync(async (req: Request, res: Response) => {
-  const result = await ServiceService.getAllFromDB();
+  const result = await ReviewService.getAllFromDB();
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Successully created retrived',
+    message: 'Review retrived successully',
     data: result,
   });
 });
-
-export const ServicesController = {
-    getAllFromDB,
-    insertIntoDB
+export const ReviewController ={
+    insertIntoDB,
+    getAllFromDB
 }
