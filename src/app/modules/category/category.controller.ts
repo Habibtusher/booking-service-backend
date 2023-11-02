@@ -6,7 +6,7 @@ import httpStatus from 'http-status';
 
 const insertIntoDB = catchasync(async (req: Request, res: Response) => {
   const data = req.body;
-  console.log(data);
+
   const result = await CategoryService.insertIntoDB(data);
   sendResponse(res, {
     statusCode: httpStatus.OK,
