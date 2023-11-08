@@ -7,6 +7,7 @@ export type IService = {
     price:number;
     category: Types.ObjectId | ICategory;
     image:string;
+    description:string;
     reviews?:IReview[];
 
 }

@@ -15,6 +15,7 @@ const serviceSchema = new Schema<IService, ServiceModel>(
       required: true,
     },
     image: String,
+    description: String,
     reviews: [reviewSchema],
   },
   {

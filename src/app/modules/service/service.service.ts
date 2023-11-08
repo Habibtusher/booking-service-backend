@@ -67,6 +67,10 @@ const deleteService = async (id: string): Promise<IService | null> => {
   const res = await Service.findOneAndDelete({ _id: id });
   return res;
 };
+const singleService = async (id: string): Promise<IService | null> => {
+  const res = await Service.findById({ _id: id });
+  return res;
+};
 const updatedService = async (
   id: string,
   payload: Partial<IService>
@@ -85,4 +89,5 @@ export const ServiceService = {
   getAllFromDB,
   deleteService,
   updatedService,
+  singleService
 };
